@@ -1,0 +1,5 @@
+**/__pycache__/
+**/.venv/
+.python-version
+**/.DS_Store
+jina_text_segmenter.py
