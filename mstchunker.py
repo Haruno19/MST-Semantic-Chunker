@@ -6,15 +6,16 @@ import numpy as np
 
 class MSTChunker():
 
+
     def __init__(self):
         self.embedder = EmbeddingFunction()
         return
     
 
     def split_text(self, text:str) -> list[str]:
-        self.chunks = chunk_text(text) #syntactical pre chunking 
+        self.chunks = chunk_text(text) # rule-based pre-chunking 
 
-        self.embeds = self.embedder.embed(self.chunks)
+        self.embeds = self.embedder.embed(self.chunks) 
         self.token_lengths = [self.embedder.count_tokens(chunk) for chunk in self.chunks]
         indices = [i for i in range(0, len(self.embeds))]
 
@@ -24,7 +25,7 @@ class MSTChunker():
         return chunks
     
 
-    def export_chunks_to_mds(self, chunks:list, output_path:str, encoding="utf-8"):
+    def export_chunks_to_md(self, chunks:list, output_path:str, encoding="utf-8"):
         open(output_path, "w", encoding=encoding).close() #clear out file
         with open(output_path, "a", encoding=encoding) as f:
             for i, chunk in enumerate(chunks):
@@ -76,7 +77,7 @@ class MSTChunker():
             parent[idx] = idx
             rank[idx] = 0
 
-        # Build edges
+        # Build edges (distance matrix)
         edges = []
         for i in range(len(indices)):
             for j in range(i + 1, len(indices)):
@@ -105,7 +106,7 @@ class MSTChunker():
         parent = {idx: idx for idx in indices}
         rank = {idx: 0 for idx in indices}
 
-        # Apply lambda-cut: only union if weight ≤ self.lmbd
+        # Apply lambda-cut: union only if weight <= self.lmbd
         for weight, u, v in mst_edges:
             if weight <= self.lmbd:
                 union_cut(u, v)
@@ -137,7 +138,7 @@ class MSTChunker():
                 chunk = self.chunks[idx]
                 chunk_tokens = self.token_lengths[idx]
 
-                # If adding this chunk would exceed max_tokens, flush current group
+                # If adding this chunk would exceed max_tokens, truncate current group
                 if token_sum + chunk_tokens > max_tokens and subchunk:
                     merged.append("\n".join(subchunk))
                     subchunk = []
@@ -158,9 +159,9 @@ class MSTChunker():
         semantic_distance = cosine(self.embeds[a], self.embeds[b])
 
 
-        ## sequential distance 
+        ## positional penalty  
         #---tunable parameters
-        gamma = 0.0275 #scale factor for local penalty
+        gamma = 0.0275 #scale factor for positional penalty
         #---------------------
 
         sequential_distance = abs(a - b)
@@ -171,12 +172,12 @@ class MSTChunker():
 
         ## vicinity reward
         #---tunable parameters
-        short_threshold = 80  # 250c, 80t; how short is a "short" chunk
-        min_len = 5  # 20c, 80t;
-        long_term_window = 2 # 2; how far apart are short chunks still considered close
-        immediate_window = 1 # 1; to bias the short header + paragraph case, should be kept 1
-        vicinity_reward = 0.275 # 0.315; scale factor of the short chunks bias
-        heading_reward = 0.85 # 0.9; scale factor of the header bias
+        short_threshold = 80 # 250c, 80t; how short is a "short" chunk (in tokens)
+        min_len = 5 # 20c; minimum length of a chunk (in tokens)
+        long_term_window = 2 # 2; how far apart chunks are still considered close
+        immediate_window = 1 # 1; used for case 2 (the header case)
+        vicinity_reward = 0.275 # 0.315; scaling factor of the bullet list item bias
+        heading_reward = 0.85 # 0.9; scaling factor of the header bias
         #---------------------
 
         len_a = max(self.token_lengths[a], min_len) #max(len(self.chunks[a]), min_len)
