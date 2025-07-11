@@ -528,14 +528,6 @@ L’agricoltura, all’inizio della WWI, rimane comunque la fonte di reddito pri
 
 Il sostegno del capitale finanziario permette lo sviluppo di nuovi settori, soprattutto idroelettrico e meccanico. Si registrano miglioramenti anche nel campo della produzione di ghisa e acciaio, nella cantieristica e nei trasporti marittimi e nella meccanica. In particolare, l’industria meccanica, svantaggiata dalle tasse sull’importazione del ferro, conobbe importanti sviluppi soprattutto nell’ambito dei cantieri navali e dalle officine produttrici di materiale ferroviario. La novita` piu` importante fu l’emergere del settore dedicato alla produzione di automobili che si affido` molto all’esportazione per crescere, dati gli elevati costi delle automobili (circa 10 anni di salario di un operaio).
 
-**Una nuova classe imprenditoriale**
-
-CGdL🡪rappresenta l’aristocrazia operaia
-
-Nasce la Confindustria dall’iniziativa di un gruppo di imprenditori a capo dei principali stabilimenti industriali.
-
-Invece, dal mondo delle piccole e medie aziende, nasce un’elite` di imprenditori. Essi credevano che la vecchia aristocrazia del denaro e i grossi possedimenti terrieri non rappresentassero piu` il centro dell’economia. Alcuni esponenti di quest’e`lite` di imprenditori sono: Agnelli, Pirelli, Olivetti e Ettore Conti. Essi volevano sensibilizzare la societa` e le istituzioni riguardo ai principi dello sviluppo capitalistico: il profitto, il gusto dell’innovazione, fabbrica perno della modernizzazione e delle trasformazioni sociali.
-
 **Divario Nord-Sud**
 
 Nel primo decennio del novecento, lo sviluppo dell’Italia non fu uniforme. Interesso principalmente il Nord-Ovest della penisola e inizio` a delinearsi il triangolo industriale Genova-Milano-Torino.
@@ -549,23 +541,3 @@ Questi furono i primi interventi pubblici per agevolare lo sviluppo del Sud. Ris
 Il polo di sviluppo di Napoli rimase isolato, gli Appennini non permisero il grande piano di elettrificazione del Sud e il piano di bonifica non fu sufficiente a coprire tutte le necessita`.
 
 In Puglia e in Calabria, la formazione di aziende agricole e di basi industriali (e quindi anche un aumento del reddito della popolazione e dell’occupazione) fu ostacolata dai territori impervi che rendevano difficili le comunicazioni, dall’uso di metodi di agricoltura antiquati e dalla scarsa vocazione imprenditoriale della popolazione.
-
-A seguito di questo molte persone decisero di emigrare all’estero, in particolare verso gli USA, il Brasile e l’Argentina. Nel 1913 emigrarono circa 813000 persone.
-
-Gli emigranti erano costretti a lasciare la propria terra a causa della fame e della poverta`.
-
-Questa fu pero` un’arma vincente per l’economia italiana in quanto i risparmi che gli emigrati trasferivano in patria contribuivano a mantenere viva l’economia del paese appesantita dalle importazioni di materie prime carenti in Italia.
-
-**GIOLITTI AL GOVERNO**
-
-* 1904 vince le elezioni con liberali riformisti (destra reazionaria e sinistra rivoluzionaria)
-* Riforme (lavoro, municipalizzazione)
-* Politica coloniale (Sinistra instabile, appoggio dalla destra)🡪 Libia: guerra con i turchi
-* Gestione finanze statali🡪 credito italiano, banca commerciale
-* Divario Nord (Milano-Torino-Genova) – Sud (sviluppo industriale, Nitti)
-* 1912 riforma elettorale🡪 suffragio universale maschile (aumenta il numero di elettori, soprattutto operai)
-* 1913 elezioni
-  + Successo socialisti, sostenuti dagli operai (riforma 1912)
-  + Patto Gentiloni (Giolitti - Cattolici)🡪 eletti 300 filo-cattolici
-  + Anticlericali ritirano l’appoggio a Giolitti
-* Giolitti di dimette, torna nel 1920

@@ -240,10 +240,10 @@ Cause:
 * Scontro Marx-Bakunin
 * Distaccamento degli inglesi, soddisfatti delle conquiste raggiunte autonomamente nel loro paese tramite azioni della classe lavoratrice
 * Numerosi deputati dei partiti operai erano entrati nel parlamento tedesco
-Venne espulso Bakunin e la sede venne spostata a New York (prima era a Londra)
-Nell’assemblea di Filadelfia, 4 anni dopo, venne decisa la fine della Prima Internazionale. Pochi giorni dopo venne fondata l’Internazionale antiautoritaria, embrione del movimento anarchico.
 
 ### Chunk 34 ###
+Venne espulso Bakunin e la sede venne spostata a New York (prima era a Londra)
+Nell’assemblea di Filadelfia, 4 anni dopo, venne decisa la fine della Prima Internazionale. Pochi giorni dopo venne fondata l’Internazionale antiautoritaria, embrione del movimento anarchico.
 La fine della Prima Internazionale, la scomparsa di Bakunin, la situazione politica e culturale e lo sviluppo dei partiti socialisti nazionali porto all’affermazione del marxismo come dottrina della classe operaia. Gli anarchici furono ridotti ad una minoranza.
 **GRANDE DEPRESSIONE**
 Alla fine del XIX secolo ci fu una grande crisi in Europa: La Grande Depressione.
@@ -348,22 +348,24 @@ La Chiesa si confronto` con le nuove ideologie e con la questione sociale. Papa 
 Il Sillabo era l’emblema della battaglia conservatrice della Chiesa. Alcuni intellettuali, si pronunciarono contro le tesi della Chiesa e alcuni governi d’Europa vietarono la stampa e la diffusione del documento.
 **Rerum novarum**
 Il successore di Pio IX, Leone XIII, intraprese una linea politica piu` aperta. Con l’enciclica Rerum Novarum, la Chiesa affermo` che gli sviluppi dell’economia rappresentavano un’importante conquista nel progresso della civilta ma la dignita` umana non poteva essere ridotta a merce e la libera concorrenza non doveva diventare la lotta di tutti contro tutti.
-Si poneva contro ogni forma di sfruttamento ed egoismo. La questione sociale doveva risolversi in modo pacifico tramite la collaborazione delle classi sociali e non attraverso lotte o rivoluzioni. L’iniziativa privata e la proprieta` privata dovevano essere tutelate al fine di promuovere la liberta` della persona e della famiglia. Lo stato doveva fungere da mediatore sostenendo le giuste rivendicazioni degli operai e tutelando l’iniziativa privata. Con la rerum novarum nacque una corrente di cattolicesimo sociale che agi` concretamente nell’ambito del mondo operaio e contadino.
 
 ### Chunk 46 ###
+Si poneva contro ogni forma di sfruttamento ed egoismo. La questione sociale doveva risolversi in modo pacifico tramite la collaborazione delle classi sociali e non attraverso lotte o rivoluzioni. L’iniziativa privata e la proprieta` privata dovevano essere tutelate al fine di promuovere la liberta` della persona e della famiglia. Lo stato doveva fungere da mediatore sostenendo le giuste rivendicazioni degli operai e tutelando l’iniziativa privata. Con la rerum novarum nacque una corrente di cattolicesimo sociale che agi` concretamente nell’ambito del mondo operaio e contadino.
+
+### Chunk 47 ###
 **Il sistema giolittiano**
 Nel 1898 il paese fu scosso da un’ondata di proteste popolari a causa del prezzo del pane.
 Il governo rispose con l’artiglieria-> Bava Baccaris a Milano spara sulla folla
 Il nuovo presidente del consiglio **Pelloux** presenta una serie di leggi che limitano la liberta` di stampa e di associazione.
 Socialisti radicali e repubblicani (ali estreme) e le forze liberali, con a capo Giolitti e Zanardelli, organizzano un’opposizione parlamentare (ostruzionismo) che risulto` vittoriosa. Le elezioni si conclusero con l’avanzata dell’opposizione (soprattutto socialisti) e Pelloux si dimise.
 
-### Chunk 47 ###
+### Chunk 48 ###
 Il governo fu affidato a Giuseppe Saracco da Umberto I (re), che fu poi assassinato dall’anarchico Gaetano Bresci. L’omicidio avrebbe potuto portare a un governo autoritario ma il governo intendeva proseguire con le politiche liberali. Vittorio Emanuele III, divenuto re, affido` il governo a Zanardelli leader della sinistra liberale.
 
-### Chunk 48 ###
+### Chunk 49 ###
 Giolitti venne nominato Ministro degli Interni e intendeva convincere le classi dirigenti italiane ad agire alla luce di una prospettiva basata sull’integrazione di massa🡪 solo migliorando le condizioni della classe popolare (piu` diritti e piu` liberta` e permettendo la partecipazione alla vita politica) si sarebbero potuti sconfiggere i partiti estremi mentre resisterle (alla classe popolare) avrebbe portato ad un rinvigorimento di questi partiti🡪 in caso di conflitti tra capitalisti e lavoratori, lo Stato non doveva piu` sostenere i capitalisti, ma essere neutrale.
 
-### Chunk 49 ###
+### Chunk 50 ###
 * Giolitti riconobbe ai lavoratori il diritto di associazione e di scioperare
 * Impose ai prefetti di non far intervenire la forza pubblica tranne in situazioni pericolose e di considerare gli scioperi come espressione della vita sociale
 Riprese la mobilitazione operaia che porto` ad un aumento dei salari. Questo avvenne grazie anche ad un’economia espansionistica che porto` gli imprenditori a credere che l’aumento dei salari avrebbe portato ad un aumento della domanda e ad un ampliamente del mercato.
@@ -376,23 +378,17 @@ La politica riformista di Giolitti porto` ad una modernizzazione del paese in ca
 Si parla di riformismo pragmatico🡪 coesistono il razionalismo e la fiducia nel progresso.
 Il progetto di modernizzazione di Giolitti puntava alla convergenza del proletariato del Nord Italia con la borghesia industriale, che avrebbe poi trainato il Sud ancora arretrato.
 
-### Chunk 50 ###
+### Chunk 51 ###
 La politica di Giolitti e` dunque caratterizzata da un duplice volto: da una parte accoglie e asseconda le richieste degli operai e delle loro associazioni, dall’altro non esita a reprimere le rivolte nel Sud Italia.
 
-### Chunk 51 ###
+### Chunk 52 ###
 **L’espansione economica**
 Giolitti, nella sua campagna riformista, trovo la strada spianata grazie ad un periodo di grande ripresa che caratterizza tutta l’Europa, oltre che gli USA. Questo periodo dura fino al 1913 e l’Italia compie grandi passi avanti verso l’industrializzazione.
 L’agricoltura, all’inizio della WWI, rimane comunque la fonte di reddito principale ma il settore industriale era in fase di grande crescita: aumentano lavoratori di questo settore e vengono migliorati gli impianti. L’Italia, dunque, fa il suo ingresso nell’area industriale dell’Europa, pur rimanendo arretrata rispetto a Francia, Germania e Inghilterra.
 
-### Chunk 52 ###
+### Chunk 53 ###
 **La diffusione delle ciminiere**
 Il sostegno del capitale finanziario permette lo sviluppo di nuovi settori, soprattutto idroelettrico e meccanico. Si registrano miglioramenti anche nel campo della produzione di ghisa e acciaio, nella cantieristica e nei trasporti marittimi e nella meccanica. In particolare, l’industria meccanica, svantaggiata dalle tasse sull’importazione del ferro, conobbe importanti sviluppi soprattutto nell’ambito dei cantieri navali e dalle officine produttrici di materiale ferroviario. La novita` piu` importante fu l’emergere del settore dedicato alla produzione di automobili che si affido` molto all’esportazione per crescere, dati gli elevati costi delle automobili (circa 10 anni di salario di un operaio).
-
-### Chunk 53 ###
-**Una nuova classe imprenditoriale**
-CGdL🡪rappresenta l’aristocrazia operaia
-Nasce la Confindustria dall’iniziativa di un gruppo di imprenditori a capo dei principali stabilimenti industriali.
-Invece, dal mondo delle piccole e medie aziende, nasce un’elite` di imprenditori. Essi credevano che la vecchia aristocrazia del denaro e i grossi possedimenti terrieri non rappresentassero piu` il centro dell’economia. Alcuni esponenti di quest’e`lite` di imprenditori sono: Agnelli, Pirelli, Olivetti e Ettore Conti. Essi volevano sensibilizzare la societa` e le istituzioni riguardo ai principi dello sviluppo capitalistico: il profitto, il gusto dell’innovazione, fabbrica perno della modernizzazione e delle trasformazioni sociali.
 
 ### Chunk 54 ###
 **Divario Nord-Sud**
@@ -406,25 +402,4 @@ Il Sud non fu del tutto abbandonato a se stesso. Infatti furono emanate delle le
 Questi furono i primi interventi pubblici per agevolare lo sviluppo del Sud. Risultarono pero` insufficienti a liberare il Sud dallo stato in cui si trovava.
 Il polo di sviluppo di Napoli rimase isolato, gli Appennini non permisero il grande piano di elettrificazione del Sud e il piano di bonifica non fu sufficiente a coprire tutte le necessita`.
 In Puglia e in Calabria, la formazione di aziende agricole e di basi industriali (e quindi anche un aumento del reddito della popolazione e dell’occupazione) fu ostacolata dai territori impervi che rendevano difficili le comunicazioni, dall’uso di metodi di agricoltura antiquati e dalla scarsa vocazione imprenditoriale della popolazione.
-
-### Chunk 57 ###
-A seguito di questo molte persone decisero di emigrare all’estero, in particolare verso gli USA, il Brasile e l’Argentina. Nel 1913 emigrarono circa 813000 persone.
-Gli emigranti erano costretti a lasciare la propria terra a causa della fame e della poverta`.
-Questa fu pero` un’arma vincente per l’economia italiana in quanto i risparmi che gli emigrati trasferivano in patria contribuivano a mantenere viva l’economia del paese appesantita dalle importazioni di materie prime carenti in Italia.
-
-### Chunk 58 ###
-**GIOLITTI AL GOVERNO**
-* 1904 vince le elezioni con liberali riformisti (destra reazionaria e sinistra rivoluzionaria)
-* Riforme (lavoro, municipalizzazione)
-* Politica coloniale (Sinistra instabile, appoggio dalla destra)🡪 Libia: guerra con i turchi
-* Gestione finanze statali🡪 credito italiano, banca commerciale
-* Divario Nord (Milano-Torino-Genova) – Sud (sviluppo industriale, Nitti)
-* 1912 riforma elettorale🡪 suffragio universale maschile (aumenta il numero di elettori, soprattutto operai)
-* 1913 elezioni
-  + Successo socialisti, sostenuti dagli operai (riforma 1912)
-  + Patto Gentiloni (Giolitti - Cattolici)🡪 eletti 300 filo-cattolici
-  + Anticlericali ritirano l’appoggio a Giolitti
-
-### Chunk 59 ###
-* Giolitti di dimette, torna nel 1920
 
