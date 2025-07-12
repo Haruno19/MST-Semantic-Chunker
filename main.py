@@ -1,6 +1,11 @@
 from mstchunker import MSTChunker
 
-with open("./docs/sample.md", "r", encoding="utf-8") as f:
+source = "./docs/sample.md"
+source = "./docs/ancient_rome.md"
+source = "./docs/world_war_one.md"
+source = "./docs/industrial_revolution.md"
+
+with open(source, "r", encoding="utf-8") as f:
     text = f.read()
 
 chunker= MSTChunker()

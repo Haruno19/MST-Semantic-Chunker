@@ -88,8 +88,11 @@ class MSTChunker():
                 edges.append((d, u, v))
 
         distances = [d for d, _, _ in edges]
-        #print(np.mean(distances))
+        print("mean distance: "+str(np.mean(distances)))
+        print("mean length: "+str(np.mean(self.token_lengths)))
+        alpha = 1.8 * np.mean(distances) + 1.6 # claude ver.
         self.lmbd = np.mean(distances) ** alpha 
+        self.lmbd = 0.20
 
         # Sort edges by weight
         edges.sort()
@@ -167,8 +170,8 @@ class MSTChunker():
         sequential_distance = abs(a - b)
         # Penalty: increase distance for far & long chunks
         #penalty = gamma * sequential_distance #linear
-        penalty = np.exp(gamma * sequential_distance) - 1 #non-linear
-
+        #penalty = np.exp(gamma * sequential_distance) - 1 #non-linear
+        penalty = gamma * sequential_distance * np.log(1 + sequential_distance/2) # claude ver.
 
         ## vicinity reward
         #---tunable parameters
