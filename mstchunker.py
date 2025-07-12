@@ -38,7 +38,8 @@ class MSTChunker():
     def _MST_clustering(self, indices:list[int]) -> list[list[int]]:
         #---tunable parameters
         distance_threshold = 6 # how far apart is too far apart for two chunks to be clustered together if semantically similar
-        alpha = 2.26 # empirically chosen to shape lambda's decay curve
+        print(f"dist thr: {distance_threshold}")
+        alpha = 2.26 # adjusted later on
         #---------------------
 
         parent = {}
@@ -88,11 +89,10 @@ class MSTChunker():
                 edges.append((d, u, v))
 
         distances = [d for d, _, _ in edges]
-        print("mean distance: "+str(np.mean(distances)))
-        print("mean length: "+str(np.mean(self.token_lengths)))
+        print(f"mean distance: {np.mean(distances)}")
+        print(f"mean length: {np.mean(self.token_lengths)}")
         alpha = 1.8 * np.mean(distances) + 1.6 # claude ver.
         self.lmbd = np.mean(distances) ** alpha 
-        self.lmbd = 0.20
 
         # Sort edges by weight
         edges.sort()
@@ -169,7 +169,6 @@ class MSTChunker():
 
         sequential_distance = abs(a - b)
         # Penalty: increase distance for far & long chunks
-        #penalty = gamma * sequential_distance #linear
         #penalty = np.exp(gamma * sequential_distance) - 1 #non-linear
         penalty = gamma * sequential_distance * np.log(1 + sequential_distance/2) # claude ver.
 
@@ -198,8 +197,8 @@ class MSTChunker():
         ## final distance
         #---tunable weights
         semantic_weight = 1.20
-        locality_weight = 1.1
-        vicinity_weight = 0.735
+        locality_weight = 0.8
+        vicinity_weight = 0.6
         #---------------------
 
         true_dist = semantic_distance*semantic_weight + penalty*locality_weight + reward*vicinity_weight
