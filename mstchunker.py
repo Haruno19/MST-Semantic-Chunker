@@ -37,7 +37,9 @@ class MSTChunker():
     ## Clustering with Minimum Spanning Tree (Kruskal)
     def _MST_clustering(self, indices:list[int]) -> list[list[int]]:
         #---tunable parameters
-        distance_threshold = 6 # how far apart is too far apart for two chunks to be clustered together if semantically similar
+        base_threshold = 5
+        scaling_factor = 0.03
+        distance_threshold = max(base_threshold, int(len(self.chunks) * scaling_factor)) # 6 # how far apart is too far apart for two chunks to be clustered together if semantically similar
         print(f"dist thr: {distance_threshold}")
         alpha = 2.26 # adjusted later on
         #---------------------
@@ -91,7 +93,9 @@ class MSTChunker():
         distances = [d for d, _, _ in edges]
         print(f"mean distance: {np.mean(distances)}")
         print(f"mean length: {np.mean(self.token_lengths)}")
-        alpha = 1.8 * np.mean(distances) + 1.6 # claude ver.
+        alpha = 1.8 * np.mean(distances) + 0.85 # claude ver.
+        #alpha = 2.26
+        print(f"alpha: {alpha}")
         self.lmbd = np.mean(distances) ** alpha 
 
         # Sort edges by weight
