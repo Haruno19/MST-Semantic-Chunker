@@ -127,13 +127,6 @@ class MSTChunker():
 
         return list(components.values())
     
-    ## no max chunk length logic
-    # def _merge_chunks_from_components(self, components):
-    #     merged = []
-    #     for component in components:
-    #         merged_chunk = "\n".join(self.chunks[i] for i in component)
-    #         merged.append(merged_chunk)
-    #     return merged
 
     def _merge_chunks_from_components(self, components:list[list[int]], max_tokens:int = 400):
         merged = []
