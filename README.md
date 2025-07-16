@@ -25,8 +25,12 @@ Measuring distance between chunks of text is notoriously difficult, as there’s
   
 Integrating two such metrics into a single cohesive and consistent measure can be tricky, and Chroma’s CSC algorithm achieves pretty good results with its approach.
 In the pursuit of achieving similar capabilities, MST-SC implements an **experimental and tunable distance measure** that incorporates **semantic distance** as well as **positional bias** into one single distance function.  
-*(Refer to the corresponding paragraph in the “**In Details…**” section for a more specific and in depth overview of how this measure is defined and computed)*  
+
+### Version 2 (Claude ver.)
+Leveraging the help of Anthropic's **Claude**, the first major version upgrade of this algorithm came about, featuring much better adaptability over a much wider variety of documents, introducing an automatic tuning process to dynamycally adjust the way the distance measure is calculated based on the input's intrisic characteristics.
   
+*(Refer to the corresponding paragraph in the “**In Details…**” section for a more specific and in depth overview of how this measure is defined and computed)*  
+
 ## Installation & Usage
 To install and test MST-SC’s chunking performance on your own documents, simply `clone` this repository, install its dependencies, and run the `main.py` script (making sure it’s pointing to the correct input file).   
   
@@ -89,20 +93,34 @@ for i in range(len(indices)):
 Another non-trivial optimization we can implement is actually dictated by the semantics of the distance function. Further details on this concept will be discussed later on, but in a nutshell, nodes *(chunks)* that are positionally too far apart from each other (say, the *3rd* and the *26th* paragraphs of the input document), will ultimately **not** going to be clustered together, in order to (loosely) adhere to a locality and sequentiality principle.   
 
 What this means effectively, is that the exact value of their distance is inconsequential to core steps of the algorithm (as it’ll turn out to be **significantly higher** than the *lambda* threshold anyways). Therefore, skipping the distance calculation of the values that are arbitrarily too far apart, significantly lowers the operations count.   
-A `distance_threshold` **tunable** parameter is introduced, and by default set to an **empirically evaluated** value of `6`.  
-```python
-edges = []
-for i in range(len(indices)):
-	for j in range(i + 1, len(indices)):
-		u, v = indices[i], indices[j]
-		if(abs(u - v) >= distance_threshold):
-			continue
-		d = self.distance(u, v)
-		edges.append((d, u, v))
-```
   
-It’s important to note that the term “*operations count*” is loosely used in the paragraph above. Ultimately, the above code repeats the internal loop exactly as many times as the *pre-optimization* version does. However, the **key difference** is that the `self.distance()` function —which constitutes the major cause of complexity in the sense that it’s the most **computational heavy** step of the algorithm— is only called a total of $(\text{distance-threshold}-1)n$ times in the final optimized version.   
-Further optimization could, *in principle*, be achieved by changing the `range` of times the internal loop is repeated to the appropriate value, instead of simply relying on the `if` condition. However, the computational gain granted by skipping the loop’s overhead and `if` evaluation is likely trivial, and becomes a *“demerit”* if we consider the current code’s much better **readability**.   
+#### Adaptive Distance Threshold
+Version 2 introduces an **adaptive distance threshold** that scales with document characteristics. Instead of a fixed threshold, the algorithm now calculates:
+```python
+base_threshold = 5
+scaling_factor = 0.03
+distance_threshold = max(base_threshold, int(len(self.chunks) * scaling_factor))
+```
+
+This means that for **longer documents** with more chunks, the algorithm will consider a wider range of chunk pairs for potential clustering, while shorter documents maintain tighter positional constraints. This adaptive approach helps balance **computational efficiency** with **clustering quality** across documents of varying lengths.
+
+### Document Characteristics Analysis
+Version 2 introduces a **pre-computation step** that analyzes the document's intrinsic characteristics to adapt the distance function parameters accordingly. This analysis computes two key metrics, the **semantic density** and the **structural fragmentation** of the document.
+
+#### Semantic Density
+The **semantic density** measures how semantically coherent and consistenr the document is overall:
+```python
+self.semantic_density = 1 - np.mean(similarities_for_density)
+```
+A **higher semantic density** indicates that chunks within the document are generally more semantically similar to each other, suggesting a focused, coherent document. A **lower semantic density** indicates more diverse content with chunks covering disparate topics.
+
+#### Structural Fragmentation
+The **fragmentation** metric measures how broken up the document structure is:
+```python
+short_chunks = sum(1 for length in self.token_lengths if length < np.mean(self.token_lengths)*1.55)
+self.fragmentation = short_chunks / len(self.chunks)
+```
+**Higher fragmentation** indicates many short chunks (headers, bullet points, brief paragraphs), while **lower fragmentation** suggests more uniform, substantial chunks.
 
 ### Chunk-Merging Problem
 Another core (albeit purely “syntactical”) step of the MST-SC algorithm is the transformation of clusters *(connected components)* into the output chunks.  
@@ -115,17 +133,14 @@ This ensures the chunks resulting of MST-SC don’t go over `400` tokens in leng
 Given this limitation, it’s even more important to use a **quality pre-chunker** that would split the input text in **many**, **short** chunks.   
   
 ### Experimental Distance Measure  
-As mentioned before, the **distance measure** is ultimately the core innovation of this algorithm, and as such, in its current state it’s still **experimental** and likely **unstable**.   
+As mentioned before, the **distance measure** is ultimately the core innovation of this algorithm. As of Version 2, the stability and adaptability of the distance function has increased significantly, producing much better results over a relatively varied set of documents.
   
 The **main goal** with this measure is to incorporate a **semantical metric**, like *cosine similarity*, with a more often used **positional/sequential metric**. 
-From a very high-level perspective, this means that the objective of this distance measure is to determine how “*distant*” two chunks of text from an input document are, balancing **how similar in content they are** *(semantical distance)* with **how close or far apart they are within the document** *(positional distance)*.  
+From a very high-level perspective, this means that the objective of this distance measure is to determine how “*distant*” two chunks of text from an input document are, balancing **how similar in content they are** *(semantical distance)* with **how close or far apart they are within the document** *(positional distance)*. 
   
-Abstractly speaking, while not rigorously proven, this *should* improve the consistency and coherence of the chunks that will eventually be possibly retieved by a RAG system and prompted to an LLM as further context for a user query. Nevertheless, I thought the concept was worth a shot in and of itself, and given the *better than expected* immediate results MST-SC demonstrated (by manually and heuristically inspecting the resulting chunks over a handful of different documents), I decided to open source and share this project.  
+Abstractly speaking, while not rigorously proven yet, this *should* improve the consistency and coherence of the chunks that will eventually be possibly retieved by a RAG system and prompted to an LLM as further context for a user query. 
     
-Next, I’d like to dive into the details of how I designed the distance measure to reflect the high-level characteristics described above.   
-
-Please note that, as claimed multiple times, the effectiveness of this metric and algorithm as a whole has been only proven **empirically** and **heuristically** over a handful of documents, and at the moment there’s no underlying mathematical definition or basis “*justifying*” it.   
-This is to say, any contribution, suggestion or feedback, and even harsh critique of this chunking approach is highly valuable for the scope of this project!   
+Next, I'd like to dive into the details of how I designed the distance measure to reflect the high-level characteristics described above.   
   
 #### The Overall Metric
 Given two text chunks `a` and `b`, the distance between them is defined by the **linear combination** of three factors, each weighed by their respective weight:  
@@ -135,14 +150,13 @@ $$
 $$
   
 Each of this component —**Semantic Distance**, **Positional Penalty**, and **Vicinity Reward**— has a clearly defined conceptual meaning and motivation, that will be analyzed and explained in the following sections.   
+
 #### Semantic Distance  
-The base metric of this distance measure is the **cosine** (dis-)**similarity**, a semantic distance metric.  
+The base metric of this distance measure is the **cosine** (dis-)**similarity**, a semantic distance metric. In Version 2, this value is **pre-computed** and cached for efficiency:
 ```python
-from scipy.spatial.distance import cosine
-semantic_distance = cosine(self.embeds[a], self.embeds[b])
+# Pre-computed and stored in self.cosine_matrix during initialization
+semantic_distance = self.cosine_matrix[(a,b)]
 ```  
-  
-**Scipy**’s implementation of the `cosine` distance is used *as-is* to calculate the semantic distance between chunks `a` and `b`.  
   
 As for **why** this metric is used as a base for the entire measure, has mainly to do with the main ambition of this chunker: creating **semantically tight** chunks of the original text to help the retrieval process bring up consistently useful contextual information.  
   
@@ -151,8 +165,7 @@ The concept of a **positional penalty** arises from the need to take into accoun
   
 While it’s preferable to have paragraphs focused on the **same topics** clustered together in a single chunk, it often happens that the embedding might not represent with high-enough precision the **surroundings** of the main topic being discussed in a paragraph.   
 What this means practically, is that paragraphs that may result in semantically similar embeddings, will likely not bring up **relevantly consistent** information if they’re found at **largely distant positions** within the document.   
-Bringing up the same example as before, the *3rd* and *26th* paragraphs of a document should ultimately **not** be chunked together, even if their embeddings are semantically similar.   
-  
+
 This **positional penalty** term is therefore designed to make the base semantic distance larger the more the chunks are far apart in terms of position within the document.   
 It relies on a scalar and tunable parameter $\gamma$, that pretty much like every other parameter in this code at the moment, has been adjusted empirically, to the value of `0.0275`.  
 ```python
@@ -164,17 +177,29 @@ The **sequential distance** of chunks `a` and `b` is calculated with a simple su
 sequential_distance = abs(a - b)
 ```  
   
-The **penalty value** itself is instead computed as a **non-linear function**, scaled by the $\gamma$ parameter mentioned above, to ensure that **the more far apart** the chunks are (i.e. the larger the `sequential_distance` is), **the bigger** the resulting `penalty` is, discouraging the clustering algorithm to put them in the same connected component if their **sequential distance** is relatively high.   
+Version 2 introduces a **refined positional penalty calculation** that provides more nuanced control over how distance affects clustering:
 ```python
-penalty = np.exp(gamma * sequential_distance) - 1
+penalty = gamma * sequential_distance * np.log(1 + sequential_distance/2)
 ```
-  
+
+This new formulation combines **linear** and **logarithmic** components:
+- The **linear term** (`gamma * sequential_distance`) ensures that penalty increases proportionally with distance
+- The **logarithmic term** (`np.log(1 + sequential_distance/2)`) provides a **gentle acceleration** that grows more slowly for very distant chunks
+
+**Compared to the original exponential function**, this new approach:
+- **Starts more gently**: For nearby chunks (distance 1-3), the penalty is much smaller than the exponential version
+- **Grows more predictably**: The logarithmic component prevents the penalty from exploding for moderately distant chunks
+- **Maintains separation**: Still effectively prevents very distant chunks from being clustered together
+- **Better balance**: Allows the semantic component to have more influence in medium-distance decisions
+
+This results in **more nuanced clustering decisions** where moderately distant but semantically related chunks can still be considered for clustering, while maintaining the principle that very distant chunks should not be grouped together.
+
 #### Vicinity Reward  
 The third and last component of this custom distance measure is the more **arbitrary** and **biased** one, but for good reasons.  
   
 Originally, the distance function was only composed of the **base semantic metric** and the **positional penalty** previously discussed. It was empirically noticed however, that semantically distant but **sequentially close and short** chunks —like *bullet list items* and even *headers* from their *immediately following paragraph*— where very often split apart in many, very short micro-chunks.   
   
-This behavior is highly undesirable, as a potential RAG system making use of this chunking algorithm to store its contextual data, will likely end up retrieving this short chunks —like bullet list items or headers— with very high similarity scores to the user’s query, but due to their shortness and inherent lack of relevant information, they will effectively be of very low to null utility in providing the LLM with the further context it needs and expects to retrieve.   
+This behavior is highly undesirable, as a potential RAG system making use of this chunking algorithm to store its contextual data, will likely end up retrieving this short chunks —like bullet list items or headers— with very high similarity scores to the user's query, but due to their shortness and inherent lack of relevant information, they will effectively be of very low to null utility in providing the LLM with the further context it needs and expects to retrieve.   
   
 Thus, the idea of a **vicinity reward** was introduced, to **artificially encourage** the clustering algorithm to put in the same connected component, regardless of their semantic distance, the two chunks `a` and `b`, when the following specific two cases occur:  
 1. Chunks `a` and `b` are arbitrarily **short** in terms of tokens, and arbitrarily **sequentially close** together'; the *bullet list case*.   
@@ -190,7 +215,7 @@ vicinity_reward = 0.275 # scaling factor of the bullet list bias
 heading_reward = 0.85 # scaling factor of the header-paragraph bias
 ```
   
-The **length** of each chunk is retrieved from the `self.token_length` list populated in the initialization fase of the algorithm. A “*safety measure*” to avoid length values potentially being set to $0$ (or an excessively small value) is implemented with the `max` function.  
+The **length** of each chunk is retrieved from the `self.token_length` list populated in the initialization fase of the algorithm. A "*safety measure*" to avoid length values potentially being set to $0$ (or an excessively small value) is implemented with the `max` function.  
 ```python
 len_a = max(self.token_lengths[a], min_len) 
 len_b = max(self.token_lengths[b], min_len)
@@ -212,46 +237,73 @@ if sequential_distance == immediate_window:
 		reward -= heading_reward * np.exp(-len_a / short_threshold)
 ```  
   
-It’s important to note that, given its *distance shrinking* role, the **vicinity reward**, when applicable, is a **negative** value.  
+It's important to note that, given its *distance shrinking* role, the **vicinity reward**, when applicable, is a **negative** value.  
   
-*(Note: it’s important for the second case specifically that chunk `a` comes sequentially before chunk `b`, as the goal is to encourage the clustering algorithm to join the header with its immediately **following** paragraph, and not the header with its immediately **preceding** paragraph. In fact, in both of those cases, the `sequential_distance == immediate_window` condition will be `True`. In this sense, it’s essential to compute the **upper** triangle of the distance matrix as opposed to the bottom one when performing the optimization step).*  
+*(Note: it's important for the second case specifically that chunk `a` comes sequentially before chunk `b`, as the goal is to encourage the clustering algorithm to join the header with its immediately **following** paragraph, and not the header with its immediately **preceding** paragraph. In fact, in both of those cases, the `sequential_distance == immediate_window` condition will be `True`. In this sense, it's essential to compute the **upper** triangle of the distance matrix as opposed to the bottom one when performing the optimization step).*  
   
-#### Weights
-After all the three components are computed accordingly to their definitions, the final distance `true_dist` is calculated. As mentioned at the start of this section, each component is scaled by a weight, which too has been determined empirically.    
+#### Adaptive Weights
+Version 2 introduces **dynamic weight calculation** based on the document's characteristics, replacing the fixed weights of Version 1. The weights are now calculated as:
+
 ```python
-semantic_weight = 1.20
-locality_weight = 1.1
-vicinity_weight = 0.735
-```  
-  
-The final calculation is a simple **linear combination** of the three components.  
+self.semantic_weight = 0.85 + (self.semantic_density * 0.75)
+self.locality_weight = 0.20 + np.exp(-0.25 * self.semantic_density - 0.5 * self.fragmentation)
+self.vicinity_weight = 0.125 + 0.60 * np.exp((self.fragmentation - 0.8) * 0.85)
+```
+
+**Semantic Weight** adaptation:
+- **Higher semantic density** → **Higher semantic weight**: When the document is more semantically coherent, the semantic distance becomes more reliable and influential
+- **Lower semantic density** → **Lower semantic weight**: When content is diverse, semantic similarity becomes less trustworthy as a clustering criterion
+
+**Locality Weight** adaptation:
+- **Higher semantic density** → **Lower locality weight**: When chunks are semantically similar, positional constraints can be relaxed
+- **Higher fragmentation** → **Lower locality weight**: When the document is fragmented, strict positional penalties would prevent beneficial clustering of related fragments
+- **Lower semantic density + Lower fragmentation** → **Higher locality weight**: When content is diverse but well-structured, positional information becomes more important
+
+**Vicinity Weight** adaptation:
+- **Higher fragmentation** → **Higher vicinity weight**: Documents with many short chunks benefit more from vicinity rewards to group headers with content
+- **Lower fragmentation** → **Lower vicinity weight**: Documents with uniform chunk sizes need less artificial clustering encouragement
+
+This adaptive weighting system allows the algorithm to **automatically adjust** its behavior based on the document's structure and content characteristics, leading to more appropriate chunking decisions across different document types.
+
+The final calculation uses these dynamic weights:
 ```python
-true_dist = semantic_distance*semantic_weight + 
-			penalty*locality_weight + 
-			reward*vicinity_weight
-```  
-  
-#### Lambda
-Finally, to close this section, I must mention how the $\lambda$  parameter, `self.lmbd`, is defined and computed.   
-  
-Determining the exact value of *lambda* proves to be perhaps the most quality-impacting operation of the entire algorithm —after all, it’s the *“grind size”* through which the **granularity** of the clustering is determined.   
-Initially, an empirically tested value of around `0.47` was considered the sweet-spot for *lambda*, but it’s clear that its entity depends strictly on how intrinsically **tight** the input chunks are with respect to one another. In other words, a **fixed value** for *lambda* would realistically only work (which in this context is to intend as *“produce a chunking of heuristically good quality”*) with documents that once pre-chunked, produce an input chunks set with a **mean distance** within a specific range.   
-  
-To solve this fundamental issue, an **adaptive calculation** of `self.lmbd` was introduced, based on the **mean distance** of the entire input chunk set, through the application of a **non-linear exponential function** with an empirically set scaling factor.  
+true_dist = (semantic_distance * self.semantic_weight + 
+             penalty * self.locality_weight + 
+             reward * self.vicinity_weight)
+```
+
+The many hard-coded values in these calculations are the result of extensive testing over a suite of documents with different characteristics; the values were empirically adjusted to produces the best results over all the documents.
+
+#### Lambda - Adaptive Threshold Calculation
+Version 2 significantly improves the lambda calculation to be more adaptive to different document types and characteristics.
+
+The lambda parameter, `self.lmbd`, determines the **granularity** of the clustering by setting the threshold for which edges in the minimum spanning tree are retained. A **smaller lambda** results in **finer granularity** (more, smaller chunks), while a **larger lambda** results in **coarser granularity** (fewer, larger chunks).
+
+The new adaptive calculation is:
 ```python
-alpha = 2.26
-...
 distances = [d for d, _, _ in edges]
-self.lmbd = np.mean(distances) ** alpha
-```  
-  
-This definition of *lambda* is still **tentative** and completely **open to radical revisions**.  
+alpha = 1.8 * np.mean(distances) + 0.85
+self.lmbd = np.mean(distances) ** alpha * np.exp(-0.15 / np.mean(distances))
+```
+
+**Alpha Calculation**:
+The alpha parameter is now **dynamically computed** based on the mean distance of the document:
+- **Higher mean distances** → **Higher alpha**: When chunks are generally more distant from each other, a higher alpha creates a more aggressive exponential curve
+- **Lower mean distances** → **Lower alpha**: When chunks are generally closer, a gentler exponential curve is used
+
+**Lambda Calculation Components**:
+1. **Base component**: `np.mean(distances) ** alpha` - This creates the primary exponential relationship
+2. **Correction factor**: `np.exp(-0.15 / np.mean(distances))` - This exponential correction provides:
+   - **Gentle reduction** for documents with higher mean distances
+   - **Minimal impact** for documents with lower mean distances
+
+**Behavior across document types**:
+- **Semantically tight documents** (low mean distances): Lambda is calculated more conservatively to avoid over-clustering
+- **Semantically diverse documents** (high mean distances): Lambda is calculated more aggressively to ensure meaningful clusters form despite higher distances
+- **Fragmented documents**: The correction factor helps balance the competing needs of clustering related fragments while maintaining appropriate granularity
   
 ## Possible Future Developments
-This is just the beginning step of this project. From now one, I’d love to continue making improvements and additions to this algorithm, in order for it to maybe oned day actually become competitive in the chunking algorithms landscape.   
+Version 2 features a significantly stronger adaptability across a much wider variety of documents. This addresses one of the main drawbacks from the original version, making MST-SC remarkably more effective for a real-world use case.  
   
-I considered evaluating MST-SC with the aforementioned Chroma Evaluating-Chunking suite, but given its (MST-SC’s) intended feature of inherently re-arranging chunks of the original text to form semantically tighter clusters, the standard metrics used for chunking evaluation aren’t really applicable, as the chunks MST-SC produces are not, by design, strict substrings of the original input text.   
-Nevertheless, building some sort of evaluation framework in order to gather actually meaningful data on the performance of MST-SC is likely the next step of this project down the line.    
-  
-Another interesting prospect, given the high amount of tunable parameters which especially the distance function relies on, would be to learn those parameters in a “traditional” machine-learning way. This step however, has the very practical and fundamental challenge that finding quality training data, in this case, text documents paired with their “optimally chunked” version, is. Given the way most current chunking algorithms work, it’s also particularly hard to find well-chunked documents with the original paragraphs re-arranged on the basis of semantic proximity, coherency & consistency, and a dataset not formatted this way, would effectively be useless in the scope of training the MST-SC algorithm. Furthermore, even assuming such a dataset could maybe be generated with the help of a sophisticated LLM, it's still very complicated to formally and expressively quantify the “loss”, that is, the “quality” of an output in comparison to the expected result. 
-While very unlikely to happen, given how valuable its results would be, this still remains an open prospect for future developments. 
+The next big step forward would therefore be a proper evaluation of its capabilies, in comparison to other currently widespread chunking strategies. As it was the case for Version 1, current evaluation techiques and suites aren't able to meaningfully evaluate MST-SC due to its intrisic feature of producing chunks that aren't strictly sub-strings of the original documents, but instead re-arranged pieces to form semantically tight chunks.  
+Building a strucutred, effective and un-biased evaluation framework will be the next major step in this research. 

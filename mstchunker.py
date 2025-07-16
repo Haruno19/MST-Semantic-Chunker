@@ -6,7 +6,6 @@ import numpy as np
 
 class MSTChunker():
 
-
     def __init__(self):
         self.embedder = EmbeddingFunction()
         return
@@ -17,8 +16,8 @@ class MSTChunker():
 
         self.embeds = self.embedder.embed(self.chunks) 
         self.token_lengths = [self.embedder.count_tokens(chunk) for chunk in self.chunks]
+        
         indices = [i for i in range(0, len(self.embeds))]
-
         connected_components = self._MST_clustering(indices)
         chunks = self._merge_chunks_from_components(connected_components, 400)
 
@@ -37,9 +36,14 @@ class MSTChunker():
     ## Clustering with Minimum Spanning Tree (Kruskal)
     def _MST_clustering(self, indices:list[int]) -> list[list[int]]:
         #---tunable parameters
-        distance_threshold = 6 # how far apart is too far apart for two chunks to be clustered together if semantically similar
-        alpha = 2.26 # empirically chosen to shape lambda's decay curve
+        base_threshold = 5
+        scaling_factor = 0.03
+        distance_threshold = max(base_threshold, int(len(self.chunks) * scaling_factor)) # 6 # how far apart is too far apart for two chunks to be clustered together if semantically similar
+        print(f"dist thr: {distance_threshold}")
+        alpha = 2.26 # adjusted later on
         #---------------------
+
+        self._precompute_characteristics(indices, distance_threshold)
 
         parent = {}
         rank = {}
@@ -88,8 +92,12 @@ class MSTChunker():
                 edges.append((d, u, v))
 
         distances = [d for d, _, _ in edges]
-        #print(np.mean(distances))
-        self.lmbd = np.mean(distances) ** alpha 
+        print(f"mean distance: {np.mean(distances)}")
+        print(f"mean length: {np.mean(self.token_lengths)}")
+        alpha = 1.8 * np.mean(distances) + 0.85 # claude ver.
+        print(f"alpha: {alpha}")
+        self.lmbd = np.mean(distances) ** alpha * np.exp(-0.15 / np.mean(distances))
+        print(f"lambda: {self.lmbd}")
 
         # Sort edges by weight
         edges.sort()
@@ -119,13 +127,6 @@ class MSTChunker():
 
         return list(components.values())
     
-    ## no max chunk length logic
-    # def _merge_chunks_from_components(self, components):
-    #     merged = []
-    #     for component in components:
-    #         merged_chunk = "\n".join(self.chunks[i] for i in component)
-    #         merged.append(merged_chunk)
-    #     return merged
 
     def _merge_chunks_from_components(self, components:list[list[int]], max_tokens:int = 400):
         merged = []
@@ -154,10 +155,41 @@ class MSTChunker():
         return merged
     
 
+    def _precompute_characteristics(self, indices, distance_threshold):
+        n = len(indices)
+        self.cosine_matrix = {}
+        similarities_for_density = []
+        
+        # Pre-compute cosine similarities within threshold
+        for i in range(n):
+            for j in range(i + 1, n):
+                u, v = indices[i], indices[j]
+                if(abs(u - v) >= distance_threshold):
+                    continue
+                cosine_sim = cosine(self.embeds[u], self.embeds[v])
+                self.cosine_matrix[(u, v)] = cosine_sim
+                similarities_for_density.append(cosine_sim)
+
+        ## Document's Characteristics
+        # Semantic Density - how semantically tight te whole document is overall
+        self.semantic_density = 1 - np.mean(similarities_for_density)
+        print(f"semantic density: {self.semantic_density}")
+
+        # Structural fragmentation - how broken up the document is, percentage of small chunks over all
+        short_chunks = sum(1 for length in self.token_lengths if length < np.mean(self.token_lengths)*1.55) # 80t = short_threshold
+        self.fragmentation = short_chunks / len(self.chunks)
+        print(f"fragmentation: {self.fragmentation}")
+
+        ## Weights calculation
+        self.semantic_weight = 0.85 + (self.semantic_density * 0.75)
+        self.locality_weight = 0.20 + np.exp(-0.25 * self.semantic_density - 0.5 * self.fragmentation)
+        self.vicinity_weight = 0.125 + 0.60 * np.exp((self.fragmentation - 0.8) * 0.85)
+
+
     def distance(self, a:int, b:int):
         ## semantic distance
-        semantic_distance = cosine(self.embeds[a], self.embeds[b])
-
+        #semantic_distance = cosine(self.embeds[a], self.embeds[b])
+        semantic_distance = self.cosine_matrix[(a,b)]
 
         ## positional penalty  
         #---tunable parameters
@@ -166,9 +198,8 @@ class MSTChunker():
 
         sequential_distance = abs(a - b)
         # Penalty: increase distance for far & long chunks
-        #penalty = gamma * sequential_distance #linear
-        penalty = np.exp(gamma * sequential_distance) - 1 #non-linear
-
+        #penalty = np.exp(gamma * sequential_distance) - 1 #non-linear
+        penalty = gamma * sequential_distance * np.log(1 + sequential_distance/2) # claude ver.
 
         ## vicinity reward
         #---tunable parameters
@@ -191,14 +222,9 @@ class MSTChunker():
             if len_a < short_threshold:
                 reward -= heading_reward * np.exp(-len_a / short_threshold) 
 
-
         ## final distance
-        #---tunable weights
-        semantic_weight = 1.20
-        locality_weight = 1.1
-        vicinity_weight = 0.735
-        #---------------------
-
-        true_dist = semantic_distance*semantic_weight + penalty*locality_weight + reward*vicinity_weight
-
+        true_dist = (semantic_distance * self.semantic_weight + 
+                     penalty * self.locality_weight + 
+                     reward * self.vicinity_weight)
+        
         return true_dist
