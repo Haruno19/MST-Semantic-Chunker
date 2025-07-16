@@ -250,16 +250,16 @@ self.locality_weight = 0.20 + np.exp(-0.25 * self.semantic_density - 0.5 * self.
 self.vicinity_weight = 0.125 + 0.60 * np.exp((self.fragmentation - 0.8) * 0.85)
 ```
 
-**Semantic Weight** adaptation:
+**Semantic Weight** adaptation:  
 - **Higher semantic density** → **Higher semantic weight**: When the document is more semantically coherent, the semantic distance becomes more reliable and influential
 - **Lower semantic density** → **Lower semantic weight**: When content is diverse, semantic similarity becomes less trustworthy as a clustering criterion
 
-**Locality Weight** adaptation:
+**Locality Weight** adaptation:  
 - **Higher semantic density** → **Lower locality weight**: When chunks are semantically similar, positional constraints can be relaxed
 - **Higher fragmentation** → **Lower locality weight**: When the document is fragmented, strict positional penalties would prevent beneficial clustering of related fragments
 - **Lower semantic density + Lower fragmentation** → **Higher locality weight**: When content is diverse but well-structured, positional information becomes more important
 
-**Vicinity Weight** adaptation:
+**Vicinity Weight** adaptation:  
 - **Higher fragmentation** → **Higher vicinity weight**: Documents with many short chunks benefit more from vicinity rewards to group headers with content
 - **Lower fragmentation** → **Lower vicinity weight**: Documents with uniform chunk sizes need less artificial clustering encouragement
 
@@ -286,18 +286,18 @@ alpha = 1.8 * np.mean(distances) + 0.85
 self.lmbd = np.mean(distances) ** alpha * np.exp(-0.15 / np.mean(distances))
 ```
 
-**Alpha Calculation**:
+**Alpha Calculation**:  
 The alpha parameter is now **dynamically computed** based on the mean distance of the document:
 - **Higher mean distances** → **Higher alpha**: When chunks are generally more distant from each other, a higher alpha creates a more aggressive exponential curve
 - **Lower mean distances** → **Lower alpha**: When chunks are generally closer, a gentler exponential curve is used
 
-**Lambda Calculation Components**:
+**Lambda Calculation Components**:  
 1. **Base component**: `np.mean(distances) ** alpha` - This creates the primary exponential relationship
 2. **Correction factor**: `np.exp(-0.15 / np.mean(distances))` - This exponential correction provides:
    - **Gentle reduction** for documents with higher mean distances
    - **Minimal impact** for documents with lower mean distances
 
-**Behavior across document types**:
+**Behavior across document types**:  
 - **Semantically tight documents** (low mean distances): Lambda is calculated more conservatively to avoid over-clustering
 - **Semantically diverse documents** (high mean distances): Lambda is calculated more aggressively to ensure meaningful clusters form despite higher distances
 - **Fragmented documents**: The correction factor helps balance the competing needs of clustering related fragments while maintaining appropriate granularity
